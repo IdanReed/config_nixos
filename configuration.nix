@@ -8,21 +8,13 @@
   imports =
     [
       ./hardware-configuration.nix
+      ./main-user.nix
     ];
-
-  users.users.idan = {
-    isNormalUser = true;
-    description = "idan reed";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      firefox
-    ];
-  };
-
+    
   environment.systemPackages = with pkgs; [
     nano
-    firefox
     git
+    firefox
     pkgs.spice
     pkgs.spice-vdagent
     pkgs.vscode
@@ -36,6 +28,11 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
   programs.nix-ld.enable = true;
   services.tailscale.enable = true;
+
+  programs.bash.shellAliases = {
+    rebuild = "sudo nixos-rebuild switch";
+    config = "cd /etc/nixos/";
+  };
 
   # Bootloader
   boot.loader.grub.enable = true;
