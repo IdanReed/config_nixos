@@ -1,26 +1,34 @@
-# sudo nixos-rebuild switch
-# nixos-help
-# sudo nixos-rebuild switch --flake /etc/nixos/#default
-
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
+  # Imports 
   imports =
     [
       ./hardware-configuration.nix
       ./main-user.nix
+
     ];
-    
+
+  # compose2nix.url = "github:aksiksi/compose2nix";
+  # compose2nix.inputs.nixpkgs.follows = "nixpkgs";
+  # compose2nix = {
+  #   url = "github:aksiksi/compose2nix";
+  #   inputs.nixpkgs.follows = "nixpkgs";
+  # };
+
+  # Packages 
   environment.systemPackages = with pkgs; [
     nano
     git
     firefox
-    pkgs.spice
-    pkgs.spice-vdagent
     pkgs.vscode
     pkgs.tailscale
+    docker-compose
+    docker
+    inputs.compose2nix.packages.x86_64-linux.default
   ];
 
+  # Options
   nixpkgs.config = {
 	  allowUnfree = true;
   };
@@ -29,12 +37,19 @@
   programs.nix-ld.enable = true;
   services.tailscale.enable = true;
 
+  virtualisation.docker.enable = true;
+
+  environment.variables.EDITOR = "nano";
+
+  # Alias
   programs.bash.shellAliases = {
+    crebuild = "sudo git add . && sudo git commit -m \"temp\" && rebuild";
     rebuild = "sudo nixos-rebuild switch";
     config = "cd /etc/nixos/";
+    glog = "sudo git log --oneline";
   };
 
-  # Bootloader
+  # ---- DEFAULT ---- 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
@@ -78,9 +93,9 @@
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "us";
-    xkbVariant = "";
+    variant = "";
   };
   services.openssh = {
     enable = true;

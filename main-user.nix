@@ -2,14 +2,13 @@
 
 {
     options = {
-
     };
 
     config = {
         users.users.idan = {
             isNormalUser = true;
             description = "idan reed";
-            extraGroups = [ "networkmanager" "wheel" ];
+            extraGroups = [ "networkmanager" "wheel" "docker" ];
             initialPassword = "password";
         };
     };
